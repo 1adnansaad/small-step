@@ -1,0 +1,931 @@
+/* ==========================================================================
+   Bangladesh Delta Plan 2100 — guided walkthrough
+   Single stylesheet, no JavaScript anywhere in this app.
+   Mobile-first: designed for ~360-412px Android screens, scales up.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Design tokens — light theme is the base, dark overrides only the colours
+   -------------------------------------------------------------------------- */
+:root {
+  /* Surfaces */
+  --bg: #f4f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef3f7;
+  --bar: #ffffff;
+  --border: #dbe4ec;
+
+  /* Text */
+  --text: #16232e;
+  --text-soft: #4a5c6b;
+  --text-faint: #7b8c9a;
+
+  /* Palette drawn from the delta itself */
+  --river: #0f6ea8;        /* river blue — primary */
+  --river-soft: #e3f0f8;
+  --delta: #1c7a5e;        /* delta green — good news, opportunity */
+  --delta-soft: #e0f2ea;
+  --silt: #a86a12;         /* silt amber — caution */
+  --silt-soft: #fbf0dc;
+  --alert: #b4402f;        /* erosion red — risk */
+  --alert-soft: #fbe7e3;
+
+  /* Shape */
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(16, 35, 50, .06), 0 4px 14px rgba(16, 35, 50, .05);
+
+  /* Rhythm */
+  --gap: 16px;
+  --page-pad: 18px;
+  --topbar-h: 54px;
+  --botbar-h: 62px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e161d;
+    --surface: #16222c;
+    --surface-2: #1c2b37;
+    --bar: #14202a;
+    --border: #2a3d4c;
+
+    --text: #e6eef4;
+    --text-soft: #a9bcc9;
+    --text-faint: #7d93a2;
+
+    --river: #58b4e8;
+    --river-soft: #133245;
+    --delta: #5cc9a1;
+    --delta-soft: #10352a;
+    --silt: #e0b063;
+    --silt-soft: #382c14;
+    --alert: #f08e7c;
+    --alert-soft: #3b1e18;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .3);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.62;
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: var(--river);
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+strong {
+  font-weight: 650;
+}
+
+abbr {
+  text-decoration: none;
+  border-bottom: 1px dotted var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Top bar — step counter + progress
+   -------------------------------------------------------------------------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--topbar-h);
+  padding: 0 12px;
+  background: var(--bar);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top);
+}
+
+.topbar__home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -6px;
+  border-radius: 50%;
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 20px;
+  flex: 0 0 auto;
+}
+
+.topbar__home:active {
+  background: var(--surface-2);
+}
+
+.topbar__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__step {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Progress rail sits directly under the bar and travels with it */
+.progress {
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 19;
+  height: 3px;
+  background: var(--surface-2);
+}
+
+.progress__fill {
+  height: 100%;
+  background: var(--river);
+}
+
+/* --------------------------------------------------------------------------
+   Page shell
+   -------------------------------------------------------------------------- */
+.page {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 22px var(--page-pad) calc(var(--botbar-h) + 34px + env(safe-area-inset-bottom));
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--river);
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: 27px;
+  line-height: 1.22;
+  letter-spacing: -.015em;
+  font-weight: 700;
+}
+
+h2 {
+  margin: 30px 0 12px;
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 680;
+  letter-spacing: -.01em;
+}
+
+h3 {
+  margin: 22px 0 8px;
+  font-size: 16px;
+  font-weight: 660;
+}
+
+.lede {
+  font-size: 17.5px;
+  line-height: 1.55;
+  color: var(--text-soft);
+  margin-bottom: 22px;
+}
+
+/* --------------------------------------------------------------------------
+   Cards & callouts
+   -------------------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: var(--gap) 0;
+  box-shadow: var(--shadow);
+}
+
+.card > :first-child {
+  margin-top: 0;
+}
+
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.callout {
+  border-left: 4px solid var(--river);
+  background: var(--river-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 13px 15px;
+  margin: var(--gap) 0;
+  font-size: 15.5px;
+}
+
+.callout--risk {
+  border-left-color: var(--alert);
+  background: var(--alert-soft);
+}
+
+.callout--good {
+  border-left-color: var(--delta);
+  background: var(--delta-soft);
+}
+
+.callout--note {
+  border-left-color: var(--silt);
+  background: var(--silt-soft);
+}
+
+.callout__title {
+  display: block;
+  font-weight: 680;
+  margin-bottom: 3px;
+}
+
+.quote {
+  margin: var(--gap) 0;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.quote p {
+  font-style: italic;
+}
+
+.quote cite {
+  display: block;
+  margin-top: 10px;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Stat tiles
+   -------------------------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: var(--gap) 0;
+}
+
+.stats--one {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px;
+}
+
+.stat__value {
+  display: block;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--river);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat--risk .stat__value {
+  color: var(--alert);
+}
+
+.stat--good .stat__value {
+  color: var(--delta);
+}
+
+.stat--note .stat__value {
+  color: var(--silt);
+}
+
+.stat__label {
+  display: block;
+  margin-top: 5px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Bar chart — proportional widths set inline per row
+   -------------------------------------------------------------------------- */
+.chart {
+  margin: var(--gap) 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.chart__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 660;
+}
+
+.chart__row {
+  margin-bottom: 13px;
+}
+
+.chart__row:last-child {
+  margin-bottom: 0;
+}
+
+.chart__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13.5px;
+  margin-bottom: 5px;
+}
+
+.chart__name {
+  color: var(--text-soft);
+  min-width: 0;
+}
+
+.chart__num {
+  font-weight: 660;
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+
+.chart__track {
+  height: 9px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.chart__bar {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--river);
+}
+
+.chart__bar--risk {
+  background: var(--alert);
+}
+
+.chart__bar--good {
+  background: var(--delta);
+}
+
+.chart__bar--note {
+  background: var(--silt);
+}
+
+.chart__foot {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: var(--text-faint);
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   Lists — strategies, sub-strategies, plain bullets
+   -------------------------------------------------------------------------- */
+.bullets {
+  margin: 0 0 1em;
+  padding-left: 20px;
+}
+
+.bullets li {
+  margin-bottom: 7px;
+}
+
+.bullets li:last-child {
+  margin-bottom: 0;
+}
+
+.strategy {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--river);
+  border-radius: var(--radius-sm);
+  padding: 14px 15px;
+  margin: var(--gap) 0;
+}
+
+.strategy__tag {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-bottom: 7px;
+  border-radius: 20px;
+  background: var(--river-soft);
+  color: var(--river);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.strategy__title {
+  margin: 0 0 8px;
+  font-size: 16.5px;
+  line-height: 1.35;
+  font-weight: 660;
+}
+
+.substrats {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.substrats li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 7px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+.substrats li:last-child {
+  margin-bottom: 0;
+}
+
+.substrats li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--river);
+}
+
+.substrats__code {
+  font-weight: 660;
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Hotspot cards
+   -------------------------------------------------------------------------- */
+.hotspots {
+  display: grid;
+  gap: 10px;
+  margin: var(--gap) 0;
+}
+
+.hotspot {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.hotspot__icon {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: var(--river-soft);
+  color: var(--river);
+}
+
+.hotspot__icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.hotspot__body {
+  min-width: 0;
+}
+
+.hotspot__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 660;
+  line-height: 1.3;
+}
+
+.hotspot__area {
+  display: block;
+  margin: 1px 0 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--river);
+  font-variant-numeric: tabular-nums;
+}
+
+.hotspot__desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Goal list
+   -------------------------------------------------------------------------- */
+.goals {
+  list-style: none;
+  counter-reset: goal;
+  margin: var(--gap) 0;
+  padding: 0;
+}
+
+.goals li {
+  counter-increment: goal;
+  position: relative;
+  padding: 13px 14px 13px 52px;
+  margin-bottom: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.goals li:last-child {
+  margin-bottom: 0;
+}
+
+.goals li::before {
+  content: counter(goal);
+  position: absolute;
+  left: 13px;
+  top: 12px;
+  width: 27px;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--river);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.goals--national li::before {
+  background: var(--delta);
+}
+
+/* --------------------------------------------------------------------------
+   Timeline (used for scenario / phasing screens)
+   -------------------------------------------------------------------------- */
+.timeline {
+  list-style: none;
+  margin: var(--gap) 0;
+  padding: 0 0 0 22px;
+  border-left: 2px solid var(--border);
+}
+
+.timeline li {
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -29px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--river);
+  border: 2px solid var(--bg);
+}
+
+.timeline__when {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--river);
+}
+
+.timeline__what {
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Bottom stepper nav
+   -------------------------------------------------------------------------- */
+.stepper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  padding-bottom: calc(9px + env(safe-area-inset-bottom));
+  background: var(--bar);
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 11px;
+  font-size: 15.5px;
+  font-weight: 640;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  transition: transform .08s ease, background-color .12s ease;
+}
+
+.btn:active {
+  transform: scale(.975);
+  background: var(--surface-2);
+}
+
+.btn--next {
+  flex: 1 1 auto;
+  background: var(--river);
+  border-color: var(--river);
+  color: #fff;
+}
+
+.btn--next:active {
+  background: var(--river);
+  filter: brightness(.92);
+}
+
+.btn--prev {
+  flex: 0 0 auto;
+  width: 52px;
+  padding: 0;
+  color: var(--text-soft);
+}
+
+.btn--ghost {
+  flex: 1 1 auto;
+  background: var(--surface);
+}
+
+.btn--block {
+  display: flex;
+  width: 100%;
+  margin: 20px 0 0;
+}
+
+.btn--lg {
+  min-height: 52px;
+  font-size: 17px;
+}
+
+/* --------------------------------------------------------------------------
+   Cover screen
+   -------------------------------------------------------------------------- */
+.cover {
+  padding: 30px var(--page-pad) 40px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.cover__crest {
+  width: 62px;
+  height: 62px;
+  margin-bottom: 18px;
+  border-radius: 17px;
+  background: linear-gradient(150deg, var(--river), var(--delta));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.cover__crest svg {
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+
+.cover__kicker {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.cover__title {
+  margin: 0 0 6px;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  font-weight: 750;
+}
+
+.cover__sub {
+  margin: 0 0 20px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+.cover__vision {
+  margin: 0 0 22px;
+  padding: 15px 17px;
+  border-radius: var(--radius);
+  background: linear-gradient(150deg, var(--river-soft), var(--delta-soft));
+  border: 1px solid var(--border);
+  font-size: 17px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.cover__vision span {
+  display: block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.source {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Contents list on the cover
+   -------------------------------------------------------------------------- */
+.toc {
+  list-style: none;
+  counter-reset: toc;
+  margin: 12px 0 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.toc li {
+  counter-increment: toc;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc li:last-child {
+  border-bottom: 0;
+}
+
+.toc a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 52px;
+  padding: 9px 14px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+
+.toc a:active {
+  background: var(--surface-2);
+}
+
+.toc a::before {
+  content: counter(toc, decimal-leading-zero);
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Part headings sit in the same list but must not consume a step number.
+   Selector matches `.toc li` specificity or better so the reset actually wins. */
+.toc li.toc__part {
+  counter-increment: none;
+  padding: 11px 14px 7px;
+  background: var(--surface-2);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Wide screens — a little more room, nothing structural changes
+   -------------------------------------------------------------------------- */
+@media (min-width: 700px) {
+  :root {
+    --page-pad: 28px;
+  }
+
+  h1 {
+    font-size: 31px;
+  }
+
+  .cover__title {
+    font-size: 40px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stats--one {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stepper {
+    justify-content: center;
+  }
+
+  .btn--next,
+  .btn--ghost {
+    flex: 0 1 400px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .btn {
+    transition: none;
+  }
+}
