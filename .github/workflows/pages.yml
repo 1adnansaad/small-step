@@ -23,10 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
+      # enablement:true turns Pages on the first time this runs, so the repo
+      # doesn't have to be configured by hand before the first deploy.
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       # The site is plain HTML and CSS, so the repository root is the artifact.
       - name: Upload the site

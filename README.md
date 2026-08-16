@@ -26,14 +26,21 @@ python3 -m http.server 8000
 
 ### How to publish it
 
-The repo is already set up for GitHub Pages. One manual step is needed, because repository
-settings can't be changed from a commit:
+The repo is set up for GitHub Pages via `.github/workflows/pages.yml`, which deploys on every
+push to `main`. The workflow passes `enablement: true`, so it switches Pages on itself the first
+time it runs — no repository settings to change first.
 
-1. Go to **Settings → Pages** in this repository.
-2. Under **Source**, choose either:
-   - **GitHub Actions** — uses `.github/workflows/pages.yml`, which deploys on every push to `main`; or
-   - **Deploy from a branch** → `main` / `(root)` — no workflow involved, since the site lives at the repo root.
-3. The app goes live at **https://1adnansaad.github.io/small-step/**
+If a run ever fails at the **Configure Pages** step with `Get Pages site failed … Not Found`,
+Pages is off and the workflow couldn't turn it on. Set it by hand instead:
+
+1. **Settings → Pages → Source → GitHub Actions**.
+2. Re-run the failed workflow from the **Actions** tab.
+
+Either way the app goes live at **https://1adnansaad.github.io/small-step/**
+
+> Don't pick **Deploy from a branch** as the source while this workflow exists — `configure-pages`
+> only works with the **GitHub Actions** source and will keep failing. Branch deploy would work on
+> its own (the site is at the repo root), but then delete the workflow.
 
 Open that URL on Android and use Chrome's **Add to Home screen** if you want it as an icon.
 
